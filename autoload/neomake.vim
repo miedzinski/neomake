@@ -199,6 +199,12 @@ function! s:MakeJob(make_id, options) abort
         let error = ''
         let argv = maker._get_argv(jobinfo)
 
+        if exists('#User#NeomakeJobInit')
+            let context = {'argv': argv, 'jobinfo': jobinfo}
+            call neomake#utils#hook('NeomakeJobInit', context)
+            let argv = context.argv
+        endif
+
         if has_key(jobinfo, 'filename')
             let save_env_file = $NEOMAKE_FILE
             let $NEOMAKE_FILE = jobinfo.filename
